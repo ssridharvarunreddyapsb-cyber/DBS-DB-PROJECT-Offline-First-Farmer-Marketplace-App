@@ -1,0 +1,12 @@
+{
+  "name": "mandi-mitra",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Local Mandi Mitra marketplace server",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

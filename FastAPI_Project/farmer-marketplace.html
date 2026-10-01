@@ -1,0 +1,1753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mandi Mitra — Farm to You, Direct</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bevan&family=Work+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap');
+
+:root{
+  --board:#1F3D2B;
+  --board-dark:#152A1E;
+  --chalk:#F6F1E4;
+  --marigold:#E8A93B;
+  --marigold-dark:#C98A22;
+  --clay:#B5563C;
+  --leaf:#6B8F5E;
+  --ink:#14231A;
+  --paper:#FBF7EC;
+  --line: rgba(246,241,228,0.18);
+  --radius: 10px;
+  --shadow: 0 10px 24px rgba(20,35,26,0.18);
+}
+
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:'Work Sans', sans-serif;
+  font-size:17px;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3{
+  font-family:'Bevan', serif;
+  font-weight:400;
+  line-height:1.15;
+  margin:0 0 .4em 0;
+  letter-spacing:.2px;
+}
+.mono{
+  font-family:'IBM Plex Mono', monospace;
+  letter-spacing:.3px;
+}
+a{color:inherit;}
+button{font-family:inherit; cursor:pointer;}
+img{max-width:100%;display:block;}
+
+/* chalk-dust texture overlay, used on dark boards */
+.grain{position:relative;}
+.grain::before{
+  content:"";
+  position:absolute; inset:0;
+  background-image:
+    radial-gradient(rgba(246,241,228,0.05) 1px, transparent 1px);
+  background-size: 3px 3px;
+  pointer-events:none;
+  mix-blend-mode:overlay;
+  opacity:.6;
+}
+
+.wrap{max-width:1080px; margin:0 auto; padding:0 24px;}
+
+/* ---------- offline banner ---------- */
+.offline-banner{
+  display:none;
+  background:var(--marigold);
+  color:var(--ink);
+  text-align:center;
+  font-family:'IBM Plex Mono', monospace;
+  font-size:14px;
+  font-weight:600;
+  padding:9px 12px;
+}
+.offline-banner.show{display:block;}
+
+/* ---------- header ---------- */
+header{
+  background:var(--board);
+  color:var(--chalk);
+  position:sticky; top:0; z-index:50;
+  border-bottom:3px solid var(--marigold);
+}
+.header-row{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:16px 24px;
+}
+.logo{
+  display:flex; align-items:center; gap:10px;
+  font-family:'Bevan', serif; font-size:22px; color:var(--chalk);
+}
+.logo .dot{color:var(--marigold);}
+.header-actions{display:flex; gap:10px; align-items:center;}
+.header-actions .demo-toggle{
+  background:transparent; border:1px solid var(--line); color:var(--chalk);
+  font-size:12px; font-family:'IBM Plex Mono',monospace; padding:7px 10px; border-radius:6px;
+}
+.header-actions .demo-toggle:hover{border-color:var(--marigold); color:var(--marigold);}
+
+.btn{
+  border:none; border-radius:7px; padding:11px 20px; font-size:15px; font-weight:600;
+  transition:transform .12s ease, box-shadow .12s ease;
+}
+.btn:active{transform:translateY(1px);}
+.btn-primary{background:var(--marigold); color:var(--ink);}
+.btn-primary:hover{background:var(--marigold-dark);}
+.btn-ghost{background:transparent; color:var(--chalk); border:1.5px solid var(--line);}
+.btn-ghost:hover{border-color:var(--marigold); color:var(--marigold);}
+.btn-clay{background:var(--clay); color:var(--chalk);}
+.btn-clay:hover{filter:brightness(1.08);}
+.btn:focus-visible, a:focus-visible, input:focus-visible{
+  outline:3px solid var(--marigold); outline-offset:2px;
+}
+
+/* ---------- views ---------- */
+.view{display:none;}
+.view.active{display:block;}
+
+/* ---------- HERO ---------- */
+.hero{
+  background:var(--board); color:var(--chalk);
+  padding:64px 0 80px 0;
+  position:relative; overflow:hidden;
+}
+.hero .wrap{position:relative; z-index:2;}
+.hero-eyebrow{
+  font-family:'IBM Plex Mono', monospace; font-size:13px; letter-spacing:2px;
+  text-transform:uppercase; color:var(--marigold); margin-bottom:14px;
+}
+.hero h1{font-size:44px; max-width:640px; color:var(--chalk);}
+.hero p.lede{max-width:520px; font-size:18px; color:rgba(246,241,228,0.85); margin-bottom:36px;}
+
+/* the two hanging signboards — signature element */
+.fork{display:flex; gap:26px; flex-wrap:wrap;}
+.board-card{
+  flex:1 1 260px; min-width:240px;
+  background:var(--paper); color:var(--ink);
+  border-radius:6px;
+  padding:26px 24px 22px 24px;
+  border-bottom:8px solid var(--marigold);
+  box-shadow:var(--shadow);
+  position:relative;
+  transform:rotate(-1.1deg);
+  transition:transform .18s ease, box-shadow .18s ease;
+}
+.board-card:nth-child(2){transform:rotate(1.1deg); border-bottom-color:var(--clay);}
+.board-card:hover{transform:rotate(0deg) translateY(-4px); box-shadow:0 16px 30px rgba(0,0,0,0.28);}
+.board-card .peg{
+  position:absolute; top:-10px; left:22px; width:16px; height:16px; border-radius:50%;
+  background:var(--marigold-dark); box-shadow: inset 0 2px 3px rgba(0,0,0,.3);
+}
+.board-card:nth-child(2) .peg{background:var(--clay); }
+.board-card .icon{font-size:34px; margin-bottom:10px; display:block;}
+.board-card h3{font-size:22px; margin-bottom:6px;}
+.board-card p{margin:0 0 18px 0; font-size:15px; color:#3c4a3f;}
+.board-card .btn{width:100%; text-align:center;}
+
+/* ---------- how it works ---------- */
+.steps{padding:56px 0; background:var(--paper);}
+.steps h2{font-size:26px; margin-bottom:30px;}
+.step-row{display:flex; gap:18px; flex-wrap:wrap;}
+.step-stub{
+  flex:1 1 220px;
+  background:#fff;
+  border:1px solid #E4DCC8;
+  border-left:5px solid var(--leaf);
+  border-radius:6px;
+  padding:18px 18px;
+}
+.step-stub .num{
+  font-family:'IBM Plex Mono',monospace; color:var(--leaf); font-size:13px; font-weight:600;
+}
+.step-stub p{margin:6px 0 0 0; font-size:15px;}
+
+/* ---------- trust strip ---------- */
+.trust{
+  background:var(--chalk); border-top:1px solid #E4DCC8; border-bottom:1px solid #E4DCC8;
+  padding:22px 0;
+}
+.trust .wrap{display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;}
+.trust p{margin:0; font-size:15px; color:var(--ink);}
+.trust a{font-weight:600; color:var(--clay); text-decoration:underline; white-space:nowrap;}
+
+/* ---------- footer ---------- */
+footer{background:var(--board-dark); color:rgba(246,241,228,0.75); padding:30px 0;}
+footer .wrap{display:flex; justify-content:space-between; flex-wrap:wrap; gap:14px; font-size:14px;}
+footer strong{color:var(--chalk);}
+
+/* ---------- LOGIN ---------- */
+.login-screen{
+  min-height:calc(100vh - 60px);
+  display:flex; align-items:center; justify-content:center;
+  background:var(--board); padding:40px 20px;
+}
+.login-card{
+  background:var(--paper); border-radius:10px; padding:36px 32px;
+  width:100%; max-width:380px; box-shadow:var(--shadow);
+  border-bottom:8px solid var(--marigold);
+}
+.login-card h2{font-size:24px; margin-bottom:4px;}
+.login-card .sub{font-size:14px; color:#5b6a5e; margin-bottom:24px;}
+.field{margin-bottom:16px;}
+.field label{display:block; font-size:14px; font-weight:600; margin-bottom:6px;}
+.field input{
+  width:100%; padding:13px 14px; font-size:16px; border-radius:7px;
+  border:1.5px solid #D9CFB4; background:#fff; color:var(--ink); font-family:inherit;
+}
+.field input:focus{outline:3px solid var(--marigold); outline-offset:0; border-color:var(--marigold);}
+.field .hint{font-size:12px; color:#7a8a7d; margin-top:5px;}
+.login-card .btn-primary{width:100%; margin-top:6px; font-size:16px; padding:13px;}
+.login-links{display:flex; justify-content:space-between; margin-top:18px; font-size:13.5px;}
+.login-links a{color:var(--clay); text-decoration:underline;}
+.role-switch{display:flex; gap:8px; margin-bottom:22px;}
+.role-switch button{
+  flex:1; padding:9px; border-radius:7px; border:1.5px solid #D9CFB4; background:#fff;
+  font-size:13.5px; font-weight:600; color:#5b6a5e;
+}
+.role-switch button.active{background:var(--board); color:var(--chalk); border-color:var(--board);}
+.field .error{font-size:12.5px; color:var(--clay); margin-top:5px; font-weight:600; display:none;}
+.field.has-error input{border-color:var(--clay);}
+.field.has-error .error{display:block;}
+.auth-panel{display:none;}
+.auth-panel.active{display:block;}
+.back-link{
+  position:absolute; top:20px; left:20px; color:var(--chalk); font-size:14px; font-weight:600;
+  display:flex; align-items:center; gap:6px; text-decoration:none;
+}
+.login-screen{position:relative;}
+
+/* ---------- DASHBOARD ---------- */
+.dash{min-height:calc(100vh - 60px); background:var(--paper); display:flex;}
+.side-nav{
+  width:210px; background:var(--board); color:var(--chalk); flex-shrink:0;
+  padding:22px 0; display:flex; flex-direction:column; gap:4px;
+}
+.side-nav .who{padding:0 20px 18px 20px; font-size:13px; color:rgba(246,241,228,0.7); border-bottom:1px solid var(--line); margin-bottom:10px;}
+.side-nav .who strong{display:block; color:var(--chalk); font-size:16px; margin-top:2px;}
+.nav-item{
+  display:flex; align-items:center; gap:12px; padding:12px 20px; font-size:15px; font-weight:600;
+  color:rgba(246,241,228,0.8); border-left:4px solid transparent; background:none; border-top:none; border-right:none; border-bottom:none; text-align:left; width:100%;
+}
+.nav-item .ic{font-size:18px;}
+.nav-item.active{background:rgba(232,169,59,0.14); color:var(--marigold); border-left-color:var(--marigold);}
+.nav-item:hover{color:var(--chalk);}
+.dash-main{flex:1; padding:32px; max-width:820px;}
+.dash-main h2{font-size:26px; margin-bottom:2px;}
+.dash-main .sub{color:#5b6a5e; margin-bottom:26px; font-size:15px;}
+
+.panel{display:none;}
+.panel.active{display:block;}
+
+.summary-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; margin-bottom:30px;}
+.card{
+  background:#fff; border:1px solid #E4DCC8; border-radius:9px; padding:18px;
+  border-top:4px solid var(--leaf);
+}
+.card.alert{border-top-color:var(--clay);}
+.card .k{font-family:'IBM Plex Mono',monospace; font-size:26px; font-weight:600; color:var(--ink);}
+.card .lbl{font-size:14px; color:#5b6a5e; margin-top:4px;}
+
+.cta-row{margin-bottom:32px;}
+.add-btn{
+  background:var(--marigold); color:var(--ink); border:none; border-radius:8px;
+  padding:13px 22px; font-weight:700; font-size:15px;
+}
+.add-btn:hover{background:var(--marigold-dark);}
+
+.listing-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:18px;}
+.listing-card{background:#fff; border:1px solid #E4DCC8; border-radius:9px; overflow:hidden;}
+.listing-photo{
+  height:110px; background:var(--leaf); display:flex; align-items:center; justify-content:center; font-size:38px;
+}
+.listing-body{padding:14px;}
+.listing-body h4{margin:0 0 4px 0; font-size:16px; font-family:'Work Sans'; font-weight:700;}
+.price-tag{
+  display:inline-block; background:var(--board); color:var(--marigold);
+  font-family:'IBM Plex Mono',monospace; font-size:14px; font-weight:600;
+  padding:3px 9px; border-radius:5px; margin:6px 0 10px 0;
+}
+.status{font-size:12px; font-weight:700; padding:3px 8px; border-radius:20px;}
+.status.active{background:rgba(107,143,94,0.18); color:#3f5b36;}
+.status.sold{background:rgba(181,86,60,0.16); color:var(--clay);}
+.listing-actions{display:flex; gap:8px; margin-top:10px;}
+.listing-actions button{
+  flex:1; font-size:13px; padding:8px; border-radius:6px; border:1px solid #D9CFB4; background:#fff; font-weight:600;
+}
+.listing-actions button:hover{border-color:var(--clay); color:var(--clay);}
+.sync-tag{font-size:11px; font-family:'IBM Plex Mono',monospace; color:var(--clay); margin-left:6px;}
+.listing-card.is-sold{opacity:.55;}
+
+/* inline price edit */
+.price-tag{cursor:pointer; border:1.5px dashed transparent; user-select:none;}
+.price-tag:hover{border-color:var(--marigold);}
+.price-edit-row{display:flex; align-items:center; gap:6px; margin:6px 0 10px 0;}
+.price-edit-row input{
+  width:72px; padding:4px 6px; font-family:'IBM Plex Mono',monospace; font-size:14px;
+  border:1.5px solid var(--marigold); border-radius:5px;
+}
+.price-edit-row button{
+  width:26px; height:26px; border-radius:5px; border:none; font-weight:700; font-size:14px; line-height:1;
+}
+.price-confirm{background:var(--leaf); color:#fff;}
+.price-cancel{background:#E4DCC8; color:var(--ink);}
+
+/* quantity stepper */
+.qty-row{display:flex; align-items:center; gap:8px; font-size:13px; color:#5b6a5e; margin-top:6px;}
+.qty-row .stepper{display:flex; align-items:center; gap:0; border:1px solid #D9CFB4; border-radius:6px; overflow:hidden;}
+.qty-row .stepper button{
+  width:26px; height:26px; background:#fff; border:none; font-weight:700; font-size:15px; color:var(--ink);
+}
+.qty-row .stepper button:hover{background:var(--chalk);}
+.qty-row .stepper span{
+  min-width:34px; text-align:center; font-family:'IBM Plex Mono',monospace; font-size:13px; font-weight:600; border-left:1px solid #D9CFB4; border-right:1px solid #D9CFB4; padding:0 4px;
+}
+
+/* status toggle button variants */
+.status-btn{flex:1; font-size:13px; padding:8px; border-radius:6px; font-weight:600; border:1px solid transparent;}
+.status-btn.to-sold{background:#fff; border-color:#D9CFB4; color:var(--ink);}
+.status-btn.to-sold:hover{border-color:var(--clay); color:var(--clay);}
+.status-btn.to-active{background:rgba(107,143,94,0.14); border-color:var(--leaf); color:#3f5b36;}
+
+/* delete link */
+.delete-link{background:none; border:none; color:var(--clay); text-decoration:underline; font-size:13px; font-weight:600; padding:0;}
+
+/* product modal */
+.modal-overlay{
+  display:none; position:fixed; inset:0; background:rgba(20,35,26,0.55); z-index:100;
+  align-items:center; justify-content:center; padding:20px;
+}
+.modal-overlay.show{display:flex;}
+.modal-card{
+  background:var(--paper); border-radius:10px; padding:28px 26px; width:100%; max-width:420px;
+  max-height:90vh; overflow-y:auto; border-bottom:8px solid var(--marigold); box-shadow:var(--shadow);
+}
+.modal-card h3{font-size:20px; margin-bottom:2px;}
+.modal-card .sub{font-size:13.5px; color:#5b6a5e; margin-bottom:18px;}
+.photo-upload{
+  width:100%; height:90px; border:1.5px dashed #D9CFB4; border-radius:8px; display:flex; align-items:center;
+  justify-content:center; gap:8px; font-size:14px; color:#5b6a5e; background:#fff; margin-bottom:16px;
+}
+.field-row{display:flex; gap:10px;}
+.field-row .field{flex:1;}
+select{
+  width:100%; padding:13px 12px; font-size:15px; border-radius:7px; border:1.5px solid #D9CFB4;
+  background:#fff; font-family:inherit; color:var(--ink);
+}
+.modal-actions{display:flex; gap:10px; margin-top:8px;}
+.modal-actions .btn{flex:1;}
+.modal-actions .btn-ghost{color:var(--ink); border-color:#D9CFB4;}
+.modal-close{
+  position:absolute; top:12px; right:14px; width:34px; height:34px; border:none;
+  border-radius:50%; background:transparent; color:var(--ink); font-size:24px; line-height:1;
+}
+.modal-close:hover{background:#E4DCC8;}
+.chat-box{background:#fff; border:1px solid #E4DCC8; border-radius:9px; overflow:hidden; max-width:620px;}
+.chat-log{min-height:220px; max-height:380px; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:10px;}
+.chat-message{max-width:78%; padding:9px 12px; border-radius:9px; background:var(--chalk); font-size:14px;}
+.chat-message.mine{align-self:flex-end; background:rgba(107,143,94,.18);}
+.chat-message .meta{font-size:11px; color:#5b6a5e; margin-top:3px;}
+.chat-compose{display:flex; gap:8px; padding:12px; border-top:1px solid #E4DCC8;}
+.chat-compose input{flex:1; padding:10px 12px; border:1.5px solid #D9CFB4; border-radius:7px; font:inherit;}
+.request-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:16px; max-width:1000px;}
+.request-card{background:#fff; border:1px solid #E4DCC8; border-left:4px solid var(--marigold); border-radius:8px; padding:16px;}
+.request-card.accepted{border-left-color:var(--leaf);}
+.request-card.declined{border-left-color:var(--clay);}
+.request-card h4{margin:0 0 6px;}
+.request-meta{font-size:12px; color:#5b6a5e; margin-bottom:10px;}
+.request-user-link{padding:0; border:0; background:transparent; color:var(--board); font:inherit; font-weight:700; text-decoration:underline; text-underline-offset:2px;}
+.request-user-link:hover{color:var(--clay);}
+.request-body{margin:10px 0; line-height:1.45;}
+.request-reply{width:100%; min-height:68px; resize:vertical; padding:9px; border:1.5px solid #D9CFB4; border-radius:7px; font:inherit;}
+.request-actions{display:flex; gap:8px; margin-top:9px;}
+.request-actions button{flex:1;}
+.contact-card{max-width:460px;}
+.contact-details{background:#fff; border:1px solid #E4DCC8; border-radius:7px; padding:14px; margin:14px 0 18px;}
+.contact-details p{margin:4px 0; font-size:14px;}
+.contact-details strong{display:inline-block; min-width:72px;}
+.profile-details{display:grid; grid-template-columns:minmax(90px,auto) 1fr; gap:8px 14px; margin:16px 0 0; font-size:14px;}
+.profile-details dt{color:#5b6a5e; font-weight:600;}
+.profile-details dd{margin:0; overflow-wrap:anywhere;}
+.contact-request-note{min-height:90px; resize:vertical;}
+.modal-footer-row{display:flex; justify-content:space-between; align-items:center; margin-top:16px;}
+.toast{
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px);
+  background:var(--board); color:var(--chalk); padding:12px 20px; border-radius:8px; font-size:14px; font-weight:600;
+  box-shadow:var(--shadow); opacity:0; pointer-events:none; transition:opacity .2s ease, transform .2s ease; z-index:200;
+}
+.toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+
+.search-row{display:flex; gap:10px; margin-bottom:16px; flex-wrap:wrap;}
+.search-row input{
+  flex:1 1 260px; padding:12px 14px; border-radius:8px; border:1.5px solid #D9CFB4; font-size:15px; font-family:inherit;
+}
+.chips{display:flex; gap:8px; margin-bottom:22px; flex-wrap:wrap;}
+.chip{
+  padding:7px 14px; border-radius:20px; border:1.5px solid #D9CFB4; background:#fff; font-size:13.5px; font-weight:600;
+}
+.chip.active{background:var(--board); color:var(--chalk); border-color:var(--board);}
+
+.support-box{background:#fff; border:1px solid #E4DCC8; border-radius:9px; padding:22px; max-width:480px;}
+.support-box h3{font-size:18px;}
+.support-box .phone{
+  display:inline-flex; align-items:center; gap:8px; background:var(--board); color:var(--chalk);
+  padding:10px 16px; border-radius:7px; font-weight:700; margin:10px 0 20px 0; text-decoration:none;
+}
+.faq-item{border-top:1px solid #EEE6D2; padding:12px 0;}
+.faq-item summary{cursor:pointer; font-weight:600; font-size:15px;}
+.faq-item p{margin:8px 0 0 0; font-size:14px; color:#5b6a5e;}
+
+@media (max-width:720px){
+  .dash{flex-direction:column;}
+  .side-nav{
+    width:100%; flex-direction:row; overflow-x:auto; padding:10px 8px; gap:2px;
+    position:sticky; top:60px; z-index:40;
+  }
+  .side-nav .who{display:none;}
+  .nav-item{flex-direction:column; gap:3px; padding:8px 14px; font-size:12px; border-left:none; border-bottom:4px solid transparent; white-space:nowrap;}
+  .nav-item.active{border-left-color:transparent; border-bottom-color:var(--marigold);}
+  .dash-main{padding:20px;}
+  .hero h1{font-size:32px;}
+  .fork{flex-direction:column;}
+  .board-card{transform:none !important;}
+}
+</style>
+</head>
+<body>
+
+<div id="offlineBanner" class="offline-banner">📡 You're offline — changes will be saved and sent when you're back online.</div>
+
+<header>
+  <div class="header-row">
+    <div class="logo"><span>🌿 Mandi<span class="dot">•</span>Mitra</span></div>
+    <div class="header-actions">
+      <button class="demo-toggle" onclick="toggleOffline()">Simulate offline</button>
+      <button class="btn btn-ghost" onclick="showView('login'); switchAuthMode('login')">Log In</button>
+      <button class="btn btn-primary" onclick="showView('login'); switchAuthMode('signup')">Sign Up</button>
+    </div>
+  </div>
+</header>
+
+<!-- ================= HOMEPAGE ================= -->
+<div id="view-home" class="view active">
+  <section class="hero grain">
+    <div class="wrap">
+      <div class="hero-eyebrow">No middleman · No hassle</div>
+      <h1>Buy fresh produce straight from the farmer down the road.</h1>
+      <p class="lede">Mandi Mitra connects local farmers with buyers nearby — list what you grow, or find what's fresh, all in one simple place. Works even when your signal doesn't.</p>
+      <div class="fork">
+        <div class="board-card">
+          <div class="peg"></div>
+          <span class="icon">🌾</span>
+          <h3>I'm a Farmer</h3>
+          <p>List your produce in under a minute and hear from buyers directly.</p>
+          <button class="btn btn-clay" onclick="showView('login'); setRole('farmer'); switchAuthMode('signup')">Sell My Produce</button>
+        </div>
+        <div class="board-card">
+          <div class="peg"></div>
+          <span class="icon">🛒</span>
+          <h3>I'm a Buyer</h3>
+          <p>Browse what's fresh nearby and message the farmer straight away.</p>
+          <button class="btn btn-primary" onclick="showView('login'); setRole('buyer'); switchAuthMode('signup')">Browse Produce</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="steps">
+    <div class="wrap">
+      <h2>How it works</h2>
+      <div class="step-row">
+        <div class="step-stub"><div class="num">STEP 1</div><p>Sign up free with just your phone number.</p></div>
+        <div class="step-stub"><div class="num">STEP 2</div><p>List your produce, or browse what's nearby.</p></div>
+        <div class="step-stub"><div class="num">STEP 3</div><p>Message directly and strike a fair deal.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="trust">
+    <div class="wrap">
+      <p>🔒 Your data stays yours. Help is always one tap away.</p>
+      <a href="#" onclick="showView('login'); goToPanel('support'); return false;">Get Help</a>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      <div><strong>Mandi Mitra</strong><br>Farm to you, direct.</div>
+      <div>📞 1800-000-1234 &nbsp; · &nbsp; ✉️ help@mandimitra.in</div>
+    </div>
+  </footer>
+</div>
+
+<!-- ================= LOGIN ================= -->
+<div id="view-login" class="view">
+  <div class="login-screen grain">
+    <a href="#" class="back-link" onclick="showView('home'); return false;">← Back</a>
+    <div class="login-card">
+      <div class="role-switch">
+        <button id="roleFarmerBtn" class="active" onclick="setRole('farmer')">🌾 Farmer</button>
+        <button id="roleBuyerBtn" onclick="setRole('buyer')">🛒 Buyer</button>
+      </div>
+
+      <!-- LOG IN -->
+      <div class="auth-panel active" id="authPanel-login">
+        <h2>Welcome back</h2>
+        <p class="sub">Log in with your phone number and PIN.</p>
+        <form id="loginForm" onsubmit="event.preventDefault(); handleLogin();">
+          <div class="field" id="loginPhoneField">
+            <label for="phone">Phone number</label>
+            <input id="phone" type="tel" inputmode="numeric" maxlength="10" placeholder="9876543210" required>
+            <div class="hint">10-digit mobile number, no spaces.</div>
+            <div class="error">Please enter a valid 10-digit phone number.</div>
+          </div>
+          <div class="field">
+            <label for="pin">PIN</label>
+            <input id="pin" type="password" inputmode="numeric" maxlength="6" placeholder="••••" required>
+            <div class="hint">4–6 digits. No special characters needed.</div>
+          </div>
+          <div class="field">
+            <label for="captchaInput-login">Security check</label>
+            <div style="margin-bottom:8px; font-size:13px; color:#5b6a5e;"> <span id="captchaQuestion-login">Loading…</span></div>
+            <input id="captchaInput-login" type="text" inputmode="numeric" placeholder="Type the answer" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Log In</button>
+        </form>
+        <div class="login-links">
+          <a href="#" onclick="resetPin(); return false;">Forgot your PIN?</a>
+          <a href="#" onclick="switchAuthMode('signup'); return false;">New here? Create an account</a>
+        </div>
+      </div>
+
+      <!-- SIGN UP -->
+      <div class="auth-panel" id="authPanel-signup">
+        <h2>Create your account</h2>
+        <p class="sub">Takes less than a minute — no email needed.</p>
+        <form id="signupForm" onsubmit="event.preventDefault(); handleSignup();">
+          <div class="field">
+            <label for="suName">Your name</label>
+            <input id="suName" type="text" placeholder="e.g., Anjali Reddy" required>
+          </div>
+          <div class="field">
+            <label for="suAddress">Address</label>
+            <input id="suAddress" type="text" autocomplete="street-address" placeholder="Street, village, or locality">
+          </div>
+          <div class="field" id="signupPhoneField">
+            <label for="suPhone">Phone number</label>
+            <input id="suPhone" type="tel" inputmode="numeric" maxlength="10" placeholder="9876543210" required>
+            <div class="hint">10-digit mobile number, no spaces.</div>
+            <div class="error">Please enter a valid 10-digit phone number.</div>
+          </div>
+          <div class="field">
+            <label for="suPin">Create a PIN</label>
+            <input id="suPin" type="password" inputmode="numeric" maxlength="6" placeholder="••••" required>
+            <div class="hint">4–6 digits.</div>
+          </div>
+          <div class="field" id="signupConfirmField">
+            <label for="suPinConfirm">Confirm PIN</label>
+            <input id="suPinConfirm" type="password" inputmode="numeric" maxlength="6" placeholder="••••" required>
+            <div class="error">PINs don't match — please check and try again.</div>
+          </div>
+          <div class="field">
+            <label for="captchaInput-signup">Security check</label>
+            <div style="margin-bottom:8px; font-size:13px; color:#5b6a5e;"> <span id="captchaQuestion-signup">Loading…</span></div>
+            <input id="captchaInput-signup" type="text" inputmode="numeric" placeholder="Type the answer" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Create Account</button>
+        </form>
+        <div class="login-links">
+          <a href="#" onclick="switchAuthMode('login'); return false;">Already have an account? Log In</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= DASHBOARD ================= -->
+<div id="view-dashboard" class="view">
+  <div class="dash">
+    <nav class="side-nav">
+      <div class="who">Logged in as<strong id="whoLabel">Farmer</strong></div>
+      <button class="nav-item active" data-panel="home" onclick="goToPanel('home')"><span class="ic">🏠</span> Home</button>
+      <button class="nav-item" data-panel="listings" onclick="goToPanel('listings')"><span class="ic" id="listingsIcon">📦</span> <span id="listingsLabel">My Listings</span></button>
+      <button class="nav-item" data-panel="messages" onclick="goToPanel('messages')"><span class="ic">💬</span> Messages</button>
+      <button class="nav-item" data-panel="requests" onclick="goToPanel('requests')"><span class="ic">📋</span> Order Requests</button>
+      <button class="nav-item" data-panel="account" onclick="goToPanel('account')"><span class="ic">👤</span> Account</button>
+      <button class="nav-item" data-panel="support" onclick="goToPanel('support')"><span class="ic">🆘</span> Support</button>
+      <div style="margin-top:auto; padding:16px 20px 0 20px;">
+        <button class="btn btn-ghost" style="width:100%; font-size:13px;" onclick="clearSession(); showView('home'); switchAuthMode('login');">Log Out</button>
+      </div>
+    </nav>
+
+    <main class="dash-main">
+      <!-- HOME -->
+      <div class="panel active" id="panel-home">
+        <h2 id="homeGreeting">Good to see you 👋</h2>
+        <p class="sub" id="homeSub">Here's what's happening today.</p>
+        <div class="summary-grid" id="summaryGrid"></div>
+        <div class="cta-row" id="homeCtaRow"></div>
+      </div>
+
+      <!-- LISTINGS / BROWSE -->
+      <div class="panel" id="panel-listings">
+        <div id="farmerListingsHeader" style="display:none;">
+          <h2>My Listings</h2>
+          <p class="sub">Add produce, update prices, mark items sold.</p>
+          <div class="cta-row"><button class="add-btn" onclick="openProductModal(null)">+ Add Product</button></div>
+        </div>
+        <div id="buyerBrowseHeader" style="display:none;">
+          <h2>Browse Produce</h2>
+          <p class="sub">Fresh listings from farmers near you.</p>
+          <div class="search-row"><input id="buyerSearch" type="text" placeholder="Search for tomatoes, rice, mangoes…" oninput="buyerSearchQuery=this.value.trim().toLowerCase(); renderListings();"></div>
+          <div class="chips">
+            <button class="chip active" data-browse-filter="All" onclick="setBrowseFilter('All')">All</button>
+            <button class="chip" data-browse-filter="Vegetables" onclick="setBrowseFilter('Vegetables')">Vegetables</button>
+            <button class="chip" data-browse-filter="Fruits" onclick="setBrowseFilter('Fruits')">Fruits</button>
+            <button class="chip" data-browse-filter="Grains" onclick="setBrowseFilter('Grains')">Grains</button>
+            <button class="chip" data-browse-filter="Dairy" onclick="setBrowseFilter('Dairy')">Dairy</button>
+            <button class="chip" data-browse-filter="Other" onclick="setBrowseFilter('Other')">Other</button>
+            <button class="chip" data-browse-filter="Nearby" onclick="setBrowseFilter('Nearby')">Nearby</button>
+          </div>
+        </div>
+        <div class="listing-grid" id="listingGrid"></div>
+      </div>
+
+      <!-- MESSAGES -->
+      <div class="panel" id="panel-messages">
+        <h2>Messages & Offers</h2>
+        <p class="sub" id="messagesSub">Conversations with buyers about your produce.</p>
+        <div class="field" style="max-width:620px;">
+          <label for="chatRecipient">Chat with</label>
+          <select id="chatRecipient" onchange="loadMessages()"></select>
+        </div>
+        <div class="chat-box">
+          <div class="chat-log" id="chatLog"><p style="color:#5b6a5e; margin:auto;">Choose a user to start chatting.</p></div>
+          <form class="chat-compose" onsubmit="event.preventDefault(); sendChatMessage();">
+            <input id="chatBody" maxlength="500" placeholder="Type a message…" autocomplete="off">
+            <button class="btn btn-primary" type="submit">Send</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- ORDER REQUESTS -->
+      <div class="panel" id="panel-requests">
+        <h2>Order Requests</h2>
+        <p class="sub" id="requestsSub">Review buyer requests and send a reply.</p>
+        <div class="request-grid" id="requestGrid"><p style="color:#5b6a5e;">Loading requests...</p></div>
+      </div>
+
+      <!-- ACCOUNT -->
+      <div class="panel" id="panel-account">
+        <h2>Account</h2>
+        <p class="sub">Your profile and saved details.</p>
+        <div class="support-box">
+          <div class="field"><label>Name</label><input id="accountName" value="Anjali Reddy" readonly></div>
+          <div class="field"><label>Phone number</label><input id="accountPhone" value="+91 98765 43210" readonly></div>
+          <div class="field"><label>Village / Area</label><input id="areaField" value="Rangareddy" readonly></div>
+          <div class="field"><label for="accountAddress">Address</label><input id="accountAddress" autocomplete="street-address" readonly></div>
+          <button class="btn btn-ghost" id="editAccountBtn" style="width:100%;" onclick="toggleAccountEdit()">Edit Details</button>
+        </div>
+      </div>
+
+      <!-- SUPPORT -->
+      <div class="panel" id="panel-support">
+        <h2>Support</h2>
+        <p class="sub">We're here to help — talk to a real person any time.</p>
+        <div class="support-box">
+          <h3>Need help fast?</h3>
+          <a class="phone" href="tel:18000001234">📞 Call 1800-000-1234</a>
+          <details class="faq-item"><summary>How do I list my produce?</summary><p>Go to "My Listings" and tap "+ Add Product." Add a photo, name, price, and quantity — that's it.</p></details>
+          <details class="faq-item"><summary>What if I lose internet while listing?</summary><p>Keep going — your listing saves on your phone and posts automatically once you're back online.</p></details>
+          <details class="faq-item"><summary>Is my phone number shared with buyers?</summary><p>No. Buyers message you inside the app; your number stays private.</p></details>
+          <div class="field" style="margin-top:16px;"><label for="msgName">Name</label><input id="msgName" placeholder="Your name"></div>
+          <div class="field"><label for="msgBody">Message</label><input id="msgBody" placeholder="How can we help?"></div>
+          <button class="btn btn-primary" style="width:100%;" onclick="alert('Message sent. We will call you back shortly.')">Send Message</button>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- ================= ADD / EDIT PRODUCT MODAL ================= -->
+<div class="modal-overlay" id="productModal">
+  <div class="modal-card">
+    <button type="button" class="modal-close" aria-label="Close product form" onclick="closeProductModal()">×</button>
+    <h3 id="modalTitle">Add Product</h3>
+    <p class="sub">Fill in what you can — only name, quantity and price are required.</p>
+    <form id="productForm" onsubmit="event.preventDefault(); saveProduct();">
+      <div class="photo-upload">📷 <span id="photoLabel">Add a photo (optional)</span></div>
+      <div class="field">
+        <label for="pName">Product name</label>
+        <input id="pName" type="text" placeholder="e.g., Tomatoes" required>
+      </div>
+      <div class="field">
+        <label for="pDesc">Description <span style="font-weight:400; color:#7a8a7d;">(optional)</span></label>
+        <input id="pDesc" type="text" placeholder="e.g., Grown without pesticides">
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="pQty">Quantity</label>
+          <input id="pQty" type="number" min="0" placeholder="40" required>
+        </div>
+        <div class="field">
+          <label for="pUnit">Unit</label>
+          <select id="pUnit">
+            <option value="kg">kg</option>
+            <option value="dozen">dozen</option>
+            <option value="bag">bag</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="pPrice">Price (₹ per unit)</label>
+          <input id="pPrice" type="number" min="0" placeholder="28" required>
+        </div>
+        <div class="field">
+          <label for="pDate">Ready by</label>
+          <input id="pDate" type="date">
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" onclick="closeProductModal()">Cancel / Go Back</button>
+        <button type="button" class="btn btn-clay" id="modalDeleteBtn" style="display:none;" onclick="deleteListing()">Delete Goods</button>
+        <button type="submit" class="btn btn-primary" id="modalSaveBtn">Save Listing</button>
+      </div>
+      <div class="modal-footer-row" id="deleteRow" style="display:none;">
+        <span style="font-size:12px; color:#5b6a5e;">Deleting removes this product permanently.</span>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="modal-overlay" id="contactModal">
+  <div class="modal-card contact-card">
+    <button type="button" class="modal-close" aria-label="Close farmer contact" onclick="closeContactModal()">×</button>
+    <h3 id="contactFarmerName">Contact Farmer</h3>
+    <p class="sub" id="contactProductName">Ask about this listing.</p>
+    <div class="contact-details">
+      <p><strong>Phone:</strong> <a id="contactFarmerPhone" href="#"></a></p>
+      <p><strong>Email:</strong> <a id="contactFarmerEmail" href="#"></a></p>
+      <p><strong>Location:</strong> <span id="contactFarmerLocation"></span></p>
+    </div>
+    <form id="contactForm" onsubmit="event.preventDefault(); sendContactRequest();">
+      <div class="field">
+        <label for="contactMessage">Message request</label>
+        <textarea class="contact-request-note" id="contactMessage" maxlength="500" placeholder="Hi, I am interested in this produce. Is it still available?" required></textarea>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" onclick="closeContactModal()">Cancel</button>
+        <button type="submit" class="btn btn-primary">Send Request</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="modal-overlay" id="userProfileModal" onclick="if(event.target===this) closeUserProfile()">
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="userProfileName">
+    <button type="button" class="modal-close" aria-label="Close user details" onclick="closeUserProfile()">×</button>
+    <h3 id="userProfileName">User details</h3>
+    <p class="sub" id="userProfileRole"></p>
+    <dl class="profile-details" id="userProfileDetails"></dl>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API_BASE = window.location.origin;
+let currentRole = 'farmer';
+let currentName = 'Anjali Reddy';
+let currentFarmerId = null;
+let currentFarmer = null;
+let currentAuthToken = null;
+let captchaState = { login: null, signup: null };
+
+function persistSession(user, token){
+  currentAuthToken = token;
+  currentFarmer = user;
+  currentFarmerId = user?._id || user?.id || null;
+  currentName = user?.name || currentName;
+  currentRole = user?.role || currentRole;
+  localStorage.setItem('mandi_mitra_session', JSON.stringify({ token, user }));
+}
+
+function clearSession(){
+  currentAuthToken = null;
+  currentFarmer = null;
+  currentFarmerId = null;
+  currentName = 'Anjali Reddy';
+  currentRole = 'farmer';
+  localStorage.removeItem('mandi_mitra_session');
+}
+
+function getAuthHeaders(extra = {}){
+  const headers = { ...extra };
+  if (currentAuthToken) headers.Authorization = `Bearer ${currentAuthToken}`;
+  if (!headers['Content-Type'] && !(extra.body instanceof FormData)) {
+    headers['Content-Type'] = 'application/json';
+  }
+  return headers;
+}
+
+async function authenticatedFetch(url, options = {}){
+  const response = await fetch(url, {
+    ...options,
+    headers: getAuthHeaders(options.headers || {}),
+  });
+  if (response.status === 401 || response.status === 403) {
+    clearSession();
+    showView('login');
+    switchAuthMode('login');
+    throw new Error('Your session expired. Please log in again.');
+  }
+  return response;
+}
+
+function showView(name){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+  window.scrollTo({top:0, behavior:'instant'});
+}
+
+function setRole(role){
+  currentRole = role;
+  document.getElementById('roleFarmerBtn').classList.toggle('active', role==='farmer');
+  document.getElementById('roleBuyerBtn').classList.toggle('active', role==='buyer');
+}
+
+async function refreshCaptcha(mode){
+  try {
+    const response = await fetch(`${API_BASE}/auth/captcha`);
+    if(!response.ok) throw new Error('Could not load captcha');
+    const challenge = await response.json();
+    captchaState[mode] = challenge;
+    const label = document.getElementById(`captchaQuestion-${mode}`);
+    if(label) label.textContent = challenge.question;
+    const input = document.getElementById(`captchaInput-${mode}`);
+    if(input) input.value = '';
+  } catch (error) {
+    const label = document.getElementById(`captchaQuestion-${mode}`);
+    if(label) label.textContent = 'Captcha unavailable';
+  }
+}
+
+function switchAuthMode(mode){
+  document.getElementById('authPanel-login').classList.toggle('active', mode==='login');
+  document.getElementById('authPanel-signup').classList.toggle('active', mode==='signup');
+  clearErrors();
+  if(mode === 'login' && !captchaState.login) refreshCaptcha('login');
+  if(mode === 'signup' && !captchaState.signup) refreshCaptcha('signup');
+}
+
+function clearErrors(){
+  document.querySelectorAll('.field').forEach(f=>f.classList.remove('has-error'));
+}
+
+/* Keep mobile-number inputs in the exact format accepted by the API. */
+function sanitizePhoneInput(el){
+  el.value = el.value.replace(/\D/g,'').slice(0,10);
+}
+
+/* PIN fields use their own six-digit limit instead of the phone-number limit. */
+function sanitizePinInput(el){
+  el.value = el.value.replace(/\D/g,'').slice(0,6);
+}
+document.addEventListener('DOMContentLoaded', async ()=>{
+  ['phone','suPhone'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.addEventListener('input', ()=> sanitizePhoneInput(el));
+  });
+  ['pin','suPin','suPinConfirm'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.addEventListener('input', ()=> sanitizePinInput(el));
+  });
+
+  await Promise.all([refreshCaptcha('login'), refreshCaptcha('signup')]);
+
+  try {
+    const saved = JSON.parse(localStorage.getItem('mandi_mitra_session') || 'null');
+    if (saved && saved.token && saved.user) {
+      persistSession(saved.user, saved.token);
+      currentName = saved.user.name || currentName;
+      enterDashboard();
+      showToast('Welcome back!');
+    }
+  } catch (error) {
+    clearSession();
+  }
+});
+
+function isValidPhone(value){
+  return /^[0-9]{10}$/.test(value);
+}
+
+async function handleLogin(){
+  clearErrors();
+  const phoneField = document.getElementById('loginPhoneField');
+  const phone = document.getElementById('phone').value.trim();
+  const pin = document.getElementById('pin').value;
+  const captchaToken = captchaState.login?.token;
+  const captchaAnswer = document.getElementById('captchaInput-login').value.trim();
+  if(!isValidPhone(phone)){
+    phoneField.classList.add('has-error');
+    document.getElementById('phone').focus();
+    return;
+  }
+  if(!/^\d{4,6}$/.test(pin)){
+    showToast('Enter your 4–6 digit PIN.');
+    document.getElementById('pin').focus();
+    return;
+  }
+  if(!captchaToken || !captchaAnswer){
+    showToast(captchaToken ? 'Enter the CAPTCHA answer.' : 'CAPTCHA unavailable. Try again.');
+    if(!captchaToken) await refreshCaptcha('login');
+    document.getElementById('captchaInput-login').focus();
+    return;
+  }
+  try {
+    const response = await fetch(`${API_BASE}/auth/login`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({phone, pin, captcha_token: captchaToken, captcha_answer: captchaAnswer})
+    });
+    if(!response.ok){
+      const error = await response.json().catch(() => ({}));
+      throw new Error(error.detail || 'Invalid phone number or PIN');
+    }
+    const farmer = await response.json();
+    persistSession(farmer, farmer.token);
+    enterDashboard();
+    await refreshCaptcha('login');
+    if(farmer.migrated_pin){
+      showToast('Your older account is ready. The PIN you entered is now saved.');
+    }
+  } catch (error) {
+    showToast(error.message || 'Incorrect phone number or PIN. Please try again.');
+    await refreshCaptcha('login');
+  }
+}
+
+async function resetPin(){
+  const phone = window.prompt('Enter the 10-digit phone number on your account:');
+  if(phone === null) return;
+  const cleanPhone = phone.replace(/\D/g, '');
+  if(!isValidPhone(cleanPhone)) return showToast('Enter a valid 10-digit phone number.');
+  try {
+    const captchaResponse = await fetch(`${API_BASE}/auth/captcha`);
+    const captcha = await captchaResponse.json().catch(() => null);
+    if(!captcha || !captcha.question || !captcha.token) throw new Error('Captcha unavailable');
+    const captchaAnswer = window.prompt(`Solve the CAPTCHA: ${captcha.question}`);
+    if(captchaAnswer === null) return;
+    const pin = window.prompt('Choose a new 4–6 digit PIN:');
+    if(pin === null) return;
+    if(!/^\d{4,6}$/.test(pin)) return showToast('PIN must contain 4–6 digits.');
+    try {
+      const response = await fetch(`${API_BASE}/auth/reset-pin`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({phone: cleanPhone, pin, captcha_token: captcha.token, captcha_answer: captchaAnswer})
+      });
+      const result = await response.json().catch(() => ({}));
+      if(!response.ok) throw new Error(result.detail || 'Could not reset your PIN');
+      document.getElementById('phone').value = cleanPhone;
+      document.getElementById('pin').value = pin;
+      showToast('PIN reset. Press Log In to continue.');
+    } catch(error) {
+      showToast(error.message || 'Could not reset your PIN.');
+    }
+  } catch(error) {
+    showToast(error.message || 'Could not load captcha.');
+  }
+}
+
+async function handleSignup(){
+  clearErrors();
+  let valid = true;
+
+  const phoneField = document.getElementById('signupPhoneField');
+  const phone = document.getElementById('suPhone').value.trim();
+  if(!isValidPhone(phone)){
+    phoneField.classList.add('has-error');
+    valid = false;
+  }
+
+  const confirmField = document.getElementById('signupConfirmField');
+  const pin = document.getElementById('suPin').value;
+  const pinConfirm = document.getElementById('suPinConfirm').value;
+  if(pin !== pinConfirm || pin.length < 4){
+    confirmField.classList.add('has-error');
+    valid = false;
+  }
+
+  if(!valid) return;
+
+  currentName = document.getElementById('suName').value.trim() || 'New User';
+  const captchaToken = captchaState.signup?.token;
+  const captchaAnswer = document.getElementById('captchaInput-signup').value.trim();
+  if(!captchaToken || !captchaAnswer){
+    showToast(captchaToken ? 'Enter the CAPTCHA answer.' : 'CAPTCHA unavailable. Try again.');
+    if(!captchaToken) await refreshCaptcha('signup');
+    document.getElementById('captchaInput-signup').focus();
+    return;
+  }
+  try {
+    const response = await fetch(`${API_BASE}/farmers`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({name: currentName, email: `${phone}@mandi.local`, phone, pin, role: currentRole, address: document.getElementById('suAddress').value.trim(), city: currentRole === 'farmer' ? 'Rangareddy' : 'Hyderabad', state: 'Telangana', captcha_token: captchaToken, captcha_answer: captchaAnswer})
+    });
+    if(!response.ok){
+      const error = await response.json().catch(() => ({}));
+      throw new Error(error.detail || 'Could not create account');
+    }
+    const result = await response.json();
+    const savedUser = result.user || {
+      _id: result.id, name: currentName, email: `${phone}@mandi.local`, phone,
+      role: currentRole, address: document.getElementById('suAddress').value.trim(), city: currentRole === 'farmer' ? 'Rangareddy' : 'Hyderabad', state: 'Telangana'
+    };
+    persistSession(savedUser, result.token);
+    enterDashboard();
+    await refreshCaptcha('signup');
+    showToast(`Account created — welcome, ${currentName.split(' ')[0]}!`);
+  } catch (error) {
+    showToast(error.message || 'Could not create your account. Is MongoDB running?');
+    await refreshCaptcha('signup');
+  }
+}
+
+function enterDashboard(){
+  showView('dashboard');
+  document.getElementById('whoLabel').textContent = currentRole === 'farmer' ? 'Farmer' : 'Buyer';
+  document.getElementById('listingsLabel').textContent = currentRole === 'farmer' ? 'My Listings' : 'Browse';
+  document.getElementById('listingsIcon').textContent = currentRole === 'farmer' ? '📦' : '🔍';
+  document.getElementById('messagesSub').textContent = currentRole === 'farmer'
+    ? 'Conversations with buyers about your produce.'
+    : 'Conversations with farmers about your orders.';
+  document.getElementById('areaField').value = currentFarmer?.city || (currentRole === 'farmer' ? 'Rangareddy' : 'Hyderabad');
+  document.getElementById('accountAddress').value = currentFarmer?.address || '';
+  const nameField = document.getElementById('accountName');
+  if(nameField) nameField.value = currentName;
+  document.getElementById('accountPhone').value = currentFarmer?.phone || '';
+
+  buildHome();
+  buildListings();
+  goToPanel('home');
+}
+
+function goToPanel(name){
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active', n.dataset.panel===name));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-'+name).classList.add('active');
+  if(name === 'messages') loadChat();
+  if(name === 'requests') loadOrderRequests();
+}
+
+function buildHome(){
+  const grid = document.getElementById('summaryGrid');
+  const cta = document.getElementById('homeCtaRow');
+  document.getElementById('homeGreeting').textContent = currentRole==='farmer'
+    ? `Good to see you, ${currentName.split(' ')[0]} 👋`
+    : `Welcome back, ${currentName.split(' ')[0]} 👋`;
+  if(currentRole==='farmer'){
+    const activeCount = farmerListings.filter(item => item.status === 'active').length;
+    const lowStockCount = farmerListings.filter(item => item.qty > 0 && item.qty <= 5).length;
+    document.getElementById('homeSub').textContent = "Here's what's happening with your listings today.";
+    grid.innerHTML = `
+      <div class="card"><div class="k">${activeCount}</div><div class="lbl">Active listings</div></div>
+      <div class="card alert"><div class="k">2</div><div class="lbl">New buyer messages</div></div>
+      <div class="card"><div class="k">${lowStockCount}</div><div class="lbl">Listing running low</div></div>`;
+    cta.innerHTML = `<button class="add-btn" onclick="goToPanel('listings')">+ Add a New Product</button>`;
+  } else {
+    document.getElementById('homeSub').textContent = "Fresh picks from farmers near you.";
+    grid.innerHTML = `
+      <div class="card"><div class="k">${buyerListings.length}</div><div class="lbl">Listings available</div></div>
+      <div class="card"><div class="k">1</div><div class="lbl">Reply from a farmer</div></div>
+      <div class="card"><div class="k">3</div><div class="lbl">Saved favourites</div></div>`;
+    cta.innerHTML = `<button class="add-btn" onclick="goToPanel('listings')">Browse Produce →</button>`;
+  }
+}
+
+let farmerListings = [];
+let buyerListings = [];
+let activeBrowseFilter = 'All';
+let buyerSearchQuery = '';
+
+function setBrowseFilter(filter){
+  activeBrowseFilter = filter;
+  document.querySelectorAll('#buyerBrowseHeader [data-browse-filter]').forEach(button => {
+    button.classList.toggle('active', button.dataset.browseFilter === filter);
+  });
+  renderListings();
+}
+
+function getProductCategory(product){
+  const category = String(product.category || '').trim().toLowerCase();
+  const categoryAliases = {
+    vegetables: ['vegetable', 'vegetables', 'veg'],
+    fruits: ['fruit', 'fruits'],
+    grains: ['grain', 'grains', 'cereal', 'cereals', 'pulses', 'pulse'],
+    dairy: ['dairy', 'milk products'],
+    other: ['other', 'others']
+  };
+  for(const [label, aliases] of Object.entries(categoryAliases)){
+    if(aliases.includes(category)) return label[0].toUpperCase() + label.slice(1);
+  }
+
+  const text = `${product.name || ''} ${product.description || ''}`.toLowerCase();
+  const categoryRules = [
+    ['Vegetables', /\b(tomato(?:es|s)?|potato(?:es|s)?|carrots?|spinach|onions?|okra|ladyfinger|brinjal|eggplant|aubergine|cabbage|cauliflower|cucumber|chill?ies|capsicum|bell peppers?|beetroot|radish|lettuce|pumpkins?|gourds?|broccoli|garlic|ginger)\b/],
+    ['Fruits', /\b(bananas?|mango(?:es|s)?|guavas?|apples?|oranges?|grapes?|papayas?|pineapples?|pomegranates?|watermelons?|muskmelons?|strawberries?|blueberries?|lemons?|limes?)\b/],
+    ['Grains', /\b(rice|wheat|millet|ragi|jowar|sorghum|bajra|maize|corn|oats|barley|lentils?|pulses?|chickpeas?|chana|dal|beans?)\b/],
+    ['Dairy', /\b(milk|curd|yogurt|yoghurt|paneer|ghee|butter|cheese|cream)\b/]
+  ];
+  return categoryRules.find(([, pattern]) => pattern.test(text))?.[0] || 'Other';
+}
+
+function getFilteredBuyerListings(){
+  return buyerListings.filter(listing => {
+    if(activeBrowseFilter !== 'All' && activeBrowseFilter !== 'Nearby'
+      && listing.category !== activeBrowseFilter) return false;
+
+    if(buyerSearchQuery && !`${listing.productName} ${listing.desc} ${listing.farmer.name || ''}`.toLowerCase().includes(buyerSearchQuery)) return false;
+
+    if(activeBrowseFilter === 'Nearby'){
+      const buyerCity = String(currentFarmer?.city || '').trim().toLowerCase();
+      const buyerState = String(currentFarmer?.state || '').trim().toLowerCase();
+      const farmerCity = String(listing.farmer.city || '').trim().toLowerCase();
+      const farmerState = String(listing.farmer.state || '').trim().toLowerCase();
+      return buyerCity && farmerCity
+        ? buyerCity === farmerCity
+        : Boolean(buyerState && farmerState && buyerState === farmerState);
+    }
+    return true;
+  });
+}
+
+function buildListings(){
+  document.getElementById('farmerListingsHeader').style.display = currentRole==='farmer' ? 'block' : 'none';
+  document.getElementById('buyerBrowseHeader').style.display = currentRole==='buyer' ? 'block' : 'none';
+  if(currentRole === 'farmer') loadFarmerListings();
+  else loadBuyerListings();
+}
+
+async function loadFarmerListings(){
+  try {
+    const response = await authenticatedFetch(`${API_BASE}/products`);
+    if(!response.ok) throw new Error('Could not load listings');
+    const products = await response.json();
+    farmerListings = products.filter(product => !currentFarmerId || product.farmer_id === currentFarmerId).map(product => ({
+      id: product._id, emoji: '🌱', name: product.name, desc: product.description,
+      unit: product.unit, qty: product.quantity, price: product.price, readyBy: product.ready_by || '',
+      status: product.status, sync: false, editingPrice: false
+    }));
+    buildHome();
+    renderListings();
+  } catch (error) {
+    showToast('Could not load listings from the server.');
+    renderListings();
+  }
+}
+
+async function loadBuyerListings(){
+  try {
+    const [productsResponse, usersResponse] = await Promise.all([
+      authenticatedFetch(`${API_BASE}/products`),
+      authenticatedFetch(`${API_BASE}/users`)
+    ]);
+    if(!productsResponse.ok || !usersResponse.ok) throw new Error('Could not load listings');
+    const products = await productsResponse.json();
+    const users = await usersResponse.json();
+    buyerListings = products.filter(product => product.status === 'active' && product.quantity > 0).map(product => ({
+      id: product._id,
+      farmerId: product.farmer_id,
+      farmer: users.find(user => user._id === product.farmer_id || user.name === product.farmer_name) || {},
+      category: getProductCategory(product),
+      emoji: '🌱', name: `${product.name} — ${product.farmer_name}`,
+      productName: product.name,
+      price: `₹${product.price}/${product.unit}`,
+      qty: `${product.quantity} ${product.unit} available`,
+      desc: product.description || '',
+      readyBy: product.ready_by || ''
+    }));
+    buildHome();
+    renderListings();
+  } catch (error) {
+    showToast('Could not load listings from the server.');
+    renderListings();
+  }
+}
+
+function renderListings(){
+  if(currentRole === 'farmer'){
+    document.getElementById('listingGrid').innerHTML = farmerListings.map(it => `
+      <div class="listing-card ${it.status==='sold' ? 'is-sold' : ''}">
+        <div class="listing-photo">${it.emoji}</div>
+        <div class="listing-body">
+          <h4>${it.name}</h4>
+          ${it.desc ? `<div style="font-size:13px; color:#5b6a5e; margin-bottom:4px;">${it.desc}</div>` : ''}
+          ${it.editingPrice
+            ? `<div class="price-edit-row">
+                 ₹<input type="number" min="0" id="priceInput-${it.id}" value="${it.price}">
+                 <span class="mono" style="font-size:13px;">/${it.unit}</span>
+                 <button class="price-confirm" onclick='confirmPriceEdit(${JSON.stringify(String(it.id))})'>✓</button>
+                 <button class="price-cancel" onclick='cancelPriceEdit(${JSON.stringify(String(it.id))})'>✕</button>
+               </div>`
+            : `<div><span class="price-tag mono" onclick='startPriceEdit(${JSON.stringify(String(it.id))})'>₹${it.price}/${it.unit}</span></div>`
+          }
+          <span class="status ${it.status}">${it.status==='sold' ? 'Sold Out' : 'Active'}</span>
+          ${it.sync ? '<span class="sync-tag">will post when online</span>' : ''}
+          <div class="qty-row">
+            <div class="stepper">
+              <button onclick='adjustQty(${JSON.stringify(String(it.id))}, -1)' aria-label="Decrease quantity">−</button>
+              <span>${it.qty}${it.unit}</span>
+              <button onclick='adjustQty(${JSON.stringify(String(it.id))}, 1)' aria-label="Increase quantity">+</button>
+            </div>
+            left
+          </div>
+          <div class="listing-actions">
+            <button onclick='openProductModal(${JSON.stringify(String(it.id))})'>Edit</button>
+            <button class="status-btn ${it.status==='sold' ? 'to-active' : 'to-sold'}" onclick='toggleStatus(${JSON.stringify(String(it.id))})'>
+              ${it.status==='sold' ? 'Mark Available' : 'Mark Sold'}
+            </button>
+            <button onclick='deleteProductById(${JSON.stringify(String(it.id))})'>Delete Goods</button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  } else {
+    const filteredListings = getFilteredBuyerListings();
+    if(!filteredListings.length){
+      document.getElementById('listingGrid').innerHTML = '<p style="color:#5b6a5e;">No listings match this filter.</p>';
+      return;
+    }
+    document.getElementById('listingGrid').innerHTML = filteredListings.map(it => `
+      <div class="listing-card">
+        <div class="listing-photo">${it.emoji}</div>
+        <div class="listing-body">
+          <h4>${it.name}</h4>
+          <div class="price-tag mono">${it.price}</div><br>
+          <span class="status active">Active</span>
+          ${it.desc ? `<div style="font-size:13px; color:#5b6a5e; margin-top:8px;">${it.desc}</div>` : ''}
+          <div style="font-size:13px; color:#5b6a5e; margin-top:6px;">${it.qty}</div>
+          ${it.readyBy ? `<div style="font-size:12px; color:#5b6a5e;">Ready by: ${it.readyBy}</div>` : ''}
+          <div class="listing-actions"><button onclick='openContactModal(${JSON.stringify(String(it.id))})'>Contact Farmer</button></div>
+        </div>
+      </div>
+    `).join('');
+  }
+}
+
+let contactListing = null;
+
+function openContactModal(listingId){
+  contactListing = buyerListings.find(item => item.id === listingId);
+  if(!contactListing) return showToast('Could not find this listing.');
+
+  const farmer = contactListing.farmer;
+  const phone = farmer.phone || 'Not available';
+  const email = farmer.email || 'Not available';
+  document.getElementById('contactFarmerName').textContent = farmer.name || 'Contact Farmer';
+  document.getElementById('contactProductName').textContent = `Ask about ${contactListing.productName}.`;
+  const phoneLink = document.getElementById('contactFarmerPhone');
+  phoneLink.textContent = phone;
+  phoneLink.href = farmer.phone ? `tel:${farmer.phone}` : '#';
+  const emailLink = document.getElementById('contactFarmerEmail');
+  emailLink.textContent = email;
+  emailLink.href = farmer.email ? `mailto:${farmer.email}` : '#';
+  document.getElementById('contactFarmerLocation').textContent = [farmer.city, farmer.state].filter(Boolean).join(', ') || 'Not available';
+  document.getElementById('contactMessage').value = `Hi ${farmer.name || 'there'}, I am interested in your ${contactListing.productName}. Is it still available?`;
+  document.getElementById('contactModal').classList.add('show');
+}
+
+function closeContactModal(){
+  document.getElementById('contactModal').classList.remove('show');
+  contactListing = null;
+}
+
+async function sendContactRequest(){
+  if(!contactListing || !currentFarmerId) return;
+  const farmer = contactListing.farmer;
+  const body = document.getElementById('contactMessage').value.trim();
+  if(!body) return;
+
+  try {
+    const response = await authenticatedFetch(`${API_BASE}/order-requests`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        buyer_id: currentFarmerId,
+        buyer_name: currentName,
+        farmer_id: contactListing.farmerId,
+        farmer_name: farmer.name || contactListing.name,
+        farmer_phone: farmer.phone || '',
+        farmer_email: farmer.email || '',
+        product_id: contactListing.id,
+        product_name: contactListing.productName,
+        body,
+      })
+    });
+    if(!response.ok){
+      const error = await response.json().catch(() => ({}));
+      throw new Error(error.detail || 'Could not send contact request');
+    }
+    closeContactModal();
+    await loadOrderRequests();
+    showToast(`Request sent to ${farmer.name || 'the farmer'}.`);
+  } catch (error) {
+    showToast(error.message || 'Could not send your request. Please try again.');
+  }
+}
+
+/* Keep requests separate from casual chat so both sides can track the order. */
+async function loadOrderRequests(){
+  const grid = document.getElementById('requestGrid');
+  if(!currentFarmerId) return;
+  try {
+    const [response, usersResponse] = await Promise.all([
+      authenticatedFetch(`${API_BASE}/order-requests/${encodeURIComponent(currentFarmerId)}`),
+      authenticatedFetch(`${API_BASE}/users`)
+    ]);
+    if(!response.ok || !usersResponse.ok) throw new Error('Could not load requests');
+    const requests = await response.json();
+    const users = await usersResponse.json();
+    requestProfiles = [];
+    document.getElementById('requestsSub').textContent = currentRole === 'farmer'
+      ? 'Review buyer requests and send a reply.'
+      : 'Track your requests and read farmer replies.';
+    if(!requests.length){
+      grid.innerHTML = '<p style="color:#5b6a5e;">No order requests yet.</p>';
+      return;
+    }
+    grid.innerHTML = requests.map(request => {
+      const status = request.status || 'pending';
+      const otherUserId = currentRole === 'farmer' ? request.buyer_id : request.farmer_id;
+      const savedProfile = currentRole === 'farmer' ? request.buyer_user : request.farmer_user;
+      const directoryProfile = users.find(user => user._id === otherUserId) || {};
+      const otherProfile = {
+        ...directoryProfile,
+        ...(savedProfile || {}),
+        _id: savedProfile?._id || directoryProfile._id || otherUserId,
+        name: savedProfile?.name || directoryProfile.name || (currentRole === 'farmer' ? request.buyer_name : request.farmer_name)
+      };
+      const otherPerson = requestProfileButton(otherProfile);
+      const date = request.created_at ? new Date(request.created_at).toLocaleString() : '';
+      if(currentRole === 'farmer'){
+        return `<article class="request-card ${escapeHtml(status)}">
+          <h4>${escapeHtml(request.product_name)}</h4>
+          <div class="request-meta">From ${otherPerson} · ${escapeHtml(date)} · ${escapeHtml(status)}</div>
+          <div class="request-body">${escapeHtml(request.body)}</div>
+          ${status === 'pending' ? `<textarea class="request-reply" id="reply-${escapeHtml(request._id)}" maxlength="500" placeholder="Reply to the buyer..."></textarea>
+            <div class="request-actions"><button class="btn btn-primary" onclick='replyToOrderRequest(${JSON.stringify(String(request._id))}, "accepted")'>Accept & Reply</button>
+            <button class="btn btn-ghost" onclick='replyToOrderRequest(${JSON.stringify(String(request._id))}, "declined")'>Decline & Reply</button></div>`
+            : `<div class="request-body"><strong>Your reply:</strong> ${escapeHtml(request.reply)}</div>
+              ${status === 'accepted' ? `<div class="request-actions"><button class="btn btn-primary" onclick='openOrderConversation(${JSON.stringify(String(request.buyer_id))})'>Open Inbox</button></div>` : ''}`}
+        </article>`;
+      }
+      return `<article class="request-card ${escapeHtml(status)}">
+        <h4>${escapeHtml(request.product_name)}</h4>
+        <div class="request-meta">To ${otherPerson} · ${escapeHtml(date)} · ${escapeHtml(status)}</div>
+        <div class="request-meta">Contact farmer: ${request.farmer_phone ? `<a href="tel:${escapeHtml(request.farmer_phone)}">${escapeHtml(request.farmer_phone)}</a>` : 'Phone unavailable'} · ${request.farmer_email ? `<a href="mailto:${escapeHtml(request.farmer_email)}">${escapeHtml(request.farmer_email)}</a>` : 'Email unavailable'}</div>
+        <div class="request-body">${escapeHtml(request.body)}</div>
+        <div class="request-body"><strong>Farmer reply:</strong> ${escapeHtml(request.reply || 'Waiting for a reply.')}</div>
+        ${status === 'accepted' ? `<div class="request-actions"><button class="btn btn-primary" onclick='openOrderConversation(${JSON.stringify(String(request.farmer_id))})'>Open Inbox</button></div>` : ''}
+      </article>`;
+    }).join('');
+  } catch (error) {
+    grid.innerHTML = '<p style="color:#B5563C;">Could not load order requests.</p>';
+  }
+}
+
+let requestProfiles = [];
+
+function requestProfileButton(profile){
+  const index = requestProfiles.push(profile || {}) - 1;
+  return `<button type="button" class="request-user-link" onclick="showRequestProfile(${index})">${escapeHtml(profile?.name || 'User details')}</button>`;
+}
+
+function requestProfileAddress(profile){
+  const values = [];
+  const add = value => {
+    if(typeof value === 'string' || typeof value === 'number'){
+      const text = String(value).trim();
+      if(text && !values.includes(text)) values.push(text);
+    }
+  };
+  if(typeof profile.address === 'object' && profile.address){
+    ['line1', 'line2', 'street', 'city', 'district', 'state', 'postal_code', 'zip'].forEach(key => add(profile.address[key]));
+  } else add(profile.address);
+  ['street', 'village', 'city', 'district', 'state', 'postal_code', 'zip'].forEach(key => add(profile[key]));
+  return values.join(', ');
+}
+
+function showRequestProfile(index){
+  const profile = requestProfiles[Number(index)] || {};
+  document.getElementById('userProfileName').textContent = profile.name || 'User details';
+  document.getElementById('userProfileRole').textContent = profile.role || 'Marketplace user';
+  const details = document.getElementById('userProfileDetails');
+  details.replaceChildren();
+  const rows = [
+    ['User ID', profile._id || profile.id || 'Not provided'],
+    ['Phone', profile.phone || 'Not provided'],
+    ['Email', profile.email || 'Not provided'],
+    ['Address', requestProfileAddress(profile) || 'Not provided']
+  ];
+  rows.forEach(([label, value]) => {
+    const term = document.createElement('dt');
+    const description = document.createElement('dd');
+    term.textContent = label;
+    description.textContent = value;
+    details.append(term, description);
+  });
+  document.getElementById('userProfileModal').classList.add('show');
+}
+
+function closeUserProfile(){
+  document.getElementById('userProfileModal').classList.remove('show');
+}
+
+async function replyToOrderRequest(requestId, status){
+  const replyInput = document.getElementById(`reply-${requestId}`);
+  const reply = replyInput?.value.trim();
+  if(!reply) return showToast('Write a reply before updating the request.');
+  try {
+    const response = await authenticatedFetch(`${API_BASE}/order-requests/${encodeURIComponent(requestId)}`, {
+      method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({status, reply})
+    });
+    const result = await response.json().catch(() => ({}));
+    if(!response.ok) throw new Error(result.detail || 'Could not update request');
+    await loadOrderRequests();
+    if(status === 'accepted') {
+      openOrderConversation(result.conversation_peer_id);
+      showToast('Request accepted. Continue messaging in the inbox.');
+    } else {
+      showToast('Request declined.');
+    }
+  } catch (error) {
+    showToast('Could not send the reply. Please try again.');
+  }
+}
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(()=> t.classList.remove('show'), 2200);
+}
+
+/* ---- status toggle ---- */
+async function toggleStatus(id){
+  const item = farmerListings.find(i=>i.id===id);
+  item.status = item.status==='sold' ? 'active' : 'sold';
+  if(item.status==='active' && item.qty===0) item.qty = 1;
+  await updateProduct(item);
+  renderListings();
+  showToast(item.status==='sold' ? `${item.name} marked Sold Out` : `${item.name} marked Available`);
+}
+
+/* ---- quantity stepper ---- */
+async function adjustQty(id, delta){
+  const item = farmerListings.find(i=>i.id===id);
+  item.qty = Math.max(0, item.qty + delta);
+  if(item.qty === 0) item.status = 'sold';
+  else if(item.status === 'sold') item.status = 'active';
+  await updateProduct(item);
+  renderListings();
+}
+
+/* ---- inline price edit ---- */
+function startPriceEdit(id){
+  farmerListings.forEach(i=> i.editingPrice = (i.id===id));
+  renderListings();
+  const input = document.getElementById('priceInput-'+id);
+  if(input){ input.focus(); input.select(); }
+}
+async function confirmPriceEdit(id){
+  const item = farmerListings.find(i=>i.id===id);
+  const input = document.getElementById('priceInput-'+id);
+  const val = parseFloat(input.value);
+  if(!isNaN(val) && val >= 0){ item.price = val; }
+  item.editingPrice = false;
+  await updateProduct(item);
+  renderListings();
+  showToast(`Price updated to ₹${item.price}/${item.unit}`);
+}
+function cancelPriceEdit(id){
+  const item = farmerListings.find(i=>i.id===id);
+  item.editingPrice = false;
+  renderListings();
+}
+
+/* ---- add / edit product modal ---- */
+let editingId = null;
+
+function openProductModal(id){
+  editingId = id;
+  const modal = document.getElementById('productModal');
+  const deleteRow = document.getElementById('deleteRow');
+  const deleteBtn = document.getElementById('modalDeleteBtn');
+  if(id === null){
+    document.getElementById('modalTitle').textContent = 'Add Product';
+    document.getElementById('modalSaveBtn').textContent = 'Save Listing';
+    document.getElementById('productForm').reset();
+    document.getElementById('photoLabel').textContent = 'Add a photo (optional)';
+    deleteRow.style.display = 'none';
+    deleteBtn.style.display = 'none';
+  } else {
+    const item = farmerListings.find(i=>i.id===id);
+    document.getElementById('modalTitle').textContent = 'Edit Product';
+    document.getElementById('modalSaveBtn').textContent = 'Save Changes';
+    document.getElementById('pName').value = item.name;
+    document.getElementById('pDesc').value = item.desc;
+    document.getElementById('pQty').value = item.qty;
+    document.getElementById('pUnit').value = item.unit;
+    document.getElementById('pPrice').value = item.price;
+    document.getElementById('pDate').value = item.readyBy || '';
+    document.getElementById('photoLabel').textContent = item.emoji ? 'Photo added' : 'Add a photo (optional)';
+    deleteRow.style.display = 'flex';
+    deleteBtn.style.display = 'block';
+  }
+  modal.classList.add('show');
+}
+
+function closeProductModal(){
+  document.getElementById('productModal').classList.remove('show');
+  editingId = null;
+}
+
+async function saveProduct(){
+  const name = document.getElementById('pName').value.trim();
+  const desc = document.getElementById('pDesc').value.trim();
+  const qty = parseFloat(document.getElementById('pQty').value) || 0;
+  const unit = document.getElementById('pUnit').value;
+  const price = parseFloat(document.getElementById('pPrice').value) || 0;
+  const readyBy = document.getElementById('pDate').value;
+  const isNewListing = editingId === null;
+
+  if(isNewListing){
+    const response = await authenticatedFetch(`${API_BASE}/products`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({farmer_id: currentFarmerId, farmer_name: currentName, name, description: desc, quantity: qty, unit, price, ready_by: readyBy, status: qty > 0 ? 'active' : 'sold'})
+    });
+    if(!response.ok) return showToast('Could not save this listing.');
+    showToast(`${name} added to your listings`);
+  } else {
+    const item = farmerListings.find(i=>i.id===editingId);
+    Object.assign(item, {name, desc, unit, qty, price, readyBy, status: qty>0 ? 'active' : 'sold'});
+    const saved = await updateProduct(item);
+    if(!saved) return showToast('Could not update this listing.');
+    showToast(`${name} updated`);
+  }
+  closeProductModal();
+  renderListings();
+  if(isNewListing) await loadFarmerListings();
+}
+
+async function updateProduct(item){
+  if(!item.id || !/^[a-f0-9]{24}$/i.test(String(item.id))) return;
+  const response = await authenticatedFetch(`${API_BASE}/products/${item.id}`, {
+    method: 'PUT',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({farmer_id: currentFarmerId, farmer_name: currentName, name: item.name, description: item.desc || '', quantity: item.qty, unit: item.unit, price: item.price, ready_by: item.readyBy || '', status: item.status})
+  });
+  return response.ok;
+}
+
+async function deleteListing(){
+  const item = farmerListings.find(i=>i.id===editingId);
+  if(!item) return;
+  if(confirm(`Delete "${item.name}"? This can't be undone.`)){
+    const response = await authenticatedFetch(`${API_BASE}/products/${editingId}`, {method: 'DELETE'});
+    if(!response.ok) return showToast('Could not delete this listing.');
+    farmerListings = farmerListings.filter(i=>i.id!==editingId);
+    closeProductModal();
+    renderListings();
+    showToast('Listing deleted');
+  }
+}
+
+function deleteProductById(id){
+  editingId = id;
+  deleteListing();
+}
+
+/* ---- chat ---- */
+let chatUsers = [];
+let pendingChatRecipientId = '';
+
+function escapeHtml(value){
+  return String(value ?? '').replace(/[&<>'"]/g, character => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+  })[character]);
+}
+
+async function loadChat(){
+  const recipientSelect = document.getElementById('chatRecipient');
+  const chatLog = document.getElementById('chatLog');
+  if(!currentFarmerId) return;
+
+  try {
+    const response = await authenticatedFetch(`${API_BASE}/users`);
+    if(!response.ok) throw new Error('Could not load users');
+    chatUsers = (await response.json()).filter(user => user._id !== currentFarmerId);
+    const previousRecipient = pendingChatRecipientId || recipientSelect.value;
+    pendingChatRecipientId = '';
+    recipientSelect.innerHTML = chatUsers.length
+      ? chatUsers.map(user => `<option value="${escapeHtml(user._id)}">${escapeHtml(user.name)} (${escapeHtml(user.role)})</option>`).join('')
+      : '<option value="">No other users yet</option>';
+    if(chatUsers.some(user => user._id === previousRecipient)) recipientSelect.value = previousRecipient;
+    if(!chatUsers.length){
+      chatLog.innerHTML = '<p style="color:#5b6a5e; margin:auto;">Create or sign in with another account to start a chat.</p>';
+      return;
+    }
+    await loadMessages();
+  } catch (error) {
+    chatLog.innerHTML = '<p style="color:#B5563C; margin:auto;">Could not load users for chat.</p>';
+  }
+}
+
+function openOrderConversation(userId){
+  if(!userId) return showToast('Could not find the other person for this order.');
+  pendingChatRecipientId = userId;
+  goToPanel('messages');
+}
+
+async function loadMessages(){
+  const recipientId = document.getElementById('chatRecipient').value;
+  const chatLog = document.getElementById('chatLog');
+  if(!currentFarmerId || !recipientId) return;
+
+  try {
+    const response = await authenticatedFetch(`${API_BASE}/messages/${encodeURIComponent(currentFarmerId)}?peer_id=${encodeURIComponent(recipientId)}`);
+    if(!response.ok) throw new Error('Could not load messages');
+    const messages = await response.json();
+    chatLog.innerHTML = messages.length ? messages.map(message => {
+      const mine = message.sender_id === currentFarmerId;
+      const time = message.created_at ? new Date(message.created_at).toLocaleString() : '';
+      return `<div class="chat-message ${mine ? 'mine' : ''}"><strong>${escapeHtml(mine ? 'You' : message.sender_name)}</strong><br>${escapeHtml(message.body)}<div class="meta">${escapeHtml(time)}</div></div>`;
+    }).join('') : '<p style="color:#5b6a5e; margin:auto;">No messages yet. Say hello!</p>';
+    chatLog.scrollTop = chatLog.scrollHeight;
+  } catch (error) {
+    chatLog.innerHTML = '<p style="color:#B5563C; margin:auto;">Could not load messages.</p>';
+  }
+}
+
+async function sendChatMessage(){
+  const recipientId = document.getElementById('chatRecipient').value;
+  const bodyInput = document.getElementById('chatBody');
+  const body = bodyInput.value.trim();
+  const recipient = chatUsers.find(user => user._id === recipientId);
+  if(!recipient) return showToast('Choose a user to message first.');
+  if(!body) return;
+
+  try {
+    const response = await authenticatedFetch(`${API_BASE}/messages`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        sender_id: currentFarmerId, sender_name: currentName,
+        recipient_id: recipient._id, recipient_name: recipient.name, body
+      })
+    });
+    if(!response.ok) throw new Error('Could not send message');
+    bodyInput.value = '';
+    await loadMessages();
+  } catch (error) {
+    showToast('Could not send message. Please try again.');
+  }
+}
+
+/* ---- account details editing ---- */
+let accountEditing = false;
+function toggleAccountEdit(){
+  const nameEl = document.getElementById('accountName');
+  const phoneEl = document.getElementById('accountPhone');
+  const areaEl = document.getElementById('areaField');
+  const addressEl = document.getElementById('accountAddress');
+  const btn = document.getElementById('editAccountBtn');
+
+  accountEditing = !accountEditing;
+
+  if(accountEditing){
+    [nameEl, areaEl, addressEl].forEach(el => el.removeAttribute('readonly'));
+    phoneEl.removeAttribute('readonly');
+    phoneEl.setAttribute('maxlength', '10');
+    phoneEl.addEventListener('input', accountPhoneSanitize);
+    nameEl.focus();
+    btn.textContent = 'Save Changes';
+    btn.classList.remove('btn-ghost');
+    btn.classList.add('btn-primary');
+  } else {
+    // validate phone before saving
+    const digits = phoneEl.value.replace(/\D/g,'');
+    if(digits.length !== 10){
+      alert('Please enter a valid 10-digit phone number.');
+      accountEditing = true; // stay in edit mode
+      return;
+    }
+    phoneEl.removeEventListener('input', accountPhoneSanitize);
+    [nameEl, phoneEl, areaEl, addressEl].forEach(el => el.setAttribute('readonly', true));
+    btn.textContent = 'Edit Details';
+    btn.classList.remove('btn-primary');
+    btn.classList.add('btn-ghost');
+
+    currentName = nameEl.value.trim() || currentName;
+    currentFarmer = {
+      ...currentFarmer,
+      name: currentName,
+      phone: digits,
+      city: areaEl.value.trim(),
+      address: addressEl.value.trim(),
+      role: currentRole
+    };
+    phoneEl.value = digits;
+    saveAccountDetails();
+  }
+}
+
+async function saveAccountDetails(){
+  if(!currentFarmerId) return;
+  try {
+    const response = await fetch(`${API_BASE}/farmers/${currentFarmerId}`, {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        name: currentFarmer.name,
+        email: currentFarmer.email || `${currentFarmer.phone}@mandi.local`,
+        phone: currentFarmer.phone,
+        role: currentFarmer.role,
+        address: currentFarmer.address || '',
+        city: currentFarmer.city,
+        state: currentFarmer.state || 'Telangana'
+      })
+    });
+    if(!response.ok) throw new Error('Could not save account');
+    buildHome();
+    showToast('Account details saved');
+  } catch (error) {
+    showToast('Could not save account details.');
+  }
+}
+function accountPhoneSanitize(e){
+  e.target.value = e.target.value.replace(/[^\d+\s]/g,'').slice(0,14);
+}
+function toggleOffline(){
+  document.getElementById('offlineBanner').classList.toggle('show');
+}
+</script>
+</body>
+</html>

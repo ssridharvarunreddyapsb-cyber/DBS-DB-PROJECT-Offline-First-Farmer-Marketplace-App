@@ -1,0 +1,399 @@
+{
+  "users": [
+    {
+      "_id": "7055b6b72105b87220d17875",
+      "name": "Lakshmi Farms",
+      "email": "lakshmi@mandi.local",
+      "phone": "9000000001",
+      "role": "farmer",
+      "city": "Rangareddy",
+      "state": "Telangana"
+    },
+    {
+      "_id": "a3a4815b81726b81bc05ab21",
+      "name": "Green Valley Dairy",
+      "email": "greenvalley@mandi.local",
+      "phone": "9000000002",
+      "role": "farmer",
+      "city": "Medchal",
+      "state": "Telangana"
+    },
+    {
+      "_id": "c6a245058c26e78dca69b41a",
+      "name": "Sunrise Orchards",
+      "email": "sunrise@mandi.local",
+      "phone": "9000000003",
+      "role": "farmer",
+      "city": "Vikarabad",
+      "state": "Telangana"
+    },
+    {
+      "name": "sridhar",
+      "email": "1234567890@mandi.local",
+      "phone": "1234567890",
+      "role": "farmer",
+      "city": "Rangareddy",
+      "state": "Telangana",
+      "_id": "b3815f41a1e4c31ce867f08f",
+      "pin_salt": "1847a7e8c22197c4166140eec6cc2630",
+      "pin_hash": "c317bf54461eaf55947d661aaf40fcb862c1569691052222011dfc24e60fe9e9"
+    },
+    {
+      "name": "sridhar",
+      "email": "1234567891@mandi.local",
+      "phone": "1234567891",
+      "role": "buyer",
+      "city": "Hyderabad",
+      "state": "Telangana",
+      "_id": "0b3eac56b75e6a11a53ebace",
+      "pin_salt": "0650bd7c358aec3c6bd3fcb374e8ab42",
+      "pin_hash": "b5b1f16fba5143fd212896731bad41a16dc349537d777fdae29f490db0b398d5"
+    },
+    {
+      "name": "varun",
+      "email": "9121873643@mandi.local",
+      "phone": "9121873643",
+      "role": "farmer",
+      "city": "Rangareddy",
+      "state": "Telangana",
+      "_id": "288d9f14eebfbbfc934cde6b",
+      "pin_salt": "11b860447d00b058a2e373d4d37607b4",
+      "pin_hash": "8192877b150c6ed8149624ecf55a0af040ceb243a215129e0d6906012f6df65b"
+    },
+    {
+      "name": "sridhar reddy",
+      "email": "9121873646@mandi.local",
+      "phone": "9121873646",
+      "role": "farmer",
+      "city": "Rangareddy",
+      "state": "Telangana",
+      "_id": "3496368a29fcada7dbc4984e",
+      "pin_salt": "a9f3c44767ac14bc4320c57c51a2664b",
+      "pin_hash": "4a718a23b3ca5a0f499a1048a9c70f691634689c1a4f0686fa1eda396a28421b"
+    },
+    {
+      "name": "sridhar reddy",
+      "email": "9121873645@mandi.local",
+      "phone": "9121873645",
+      "role": "buyer",
+      "city": "Hyderabad",
+      "state": "Telangana",
+      "_id": "bff6f87c65f13aa75a830302",
+      "pin_salt": "2c424b69aa6fc2ed0b76c9bf99774c12",
+      "pin_hash": "9c73ec59e8dbfdfc2b9d7df9ce5c06ebf884d5acc590beef3b23dc9eccda8647"
+    },
+    {
+      "name": "siddu",
+      "email": "1234567899@mandi.local",
+      "phone": "1234567899",
+      "role": "buyer",
+      "city": "Hyderabad",
+      "state": "Telangana",
+      "_id": "cfde986d96d16117b2696bcf"
+    },
+    {
+      "name": "Siddu Reddy",
+      "email": "1234567898@mandi.local",
+      "phone": "1234567898",
+      "role": "buyer",
+      "city": "Hyderabad",
+      "state": "Telangana",
+      "_id": "c5f04921340a1bb0200e016d",
+      "pin_salt": "8cd32834da536a2b8b09841a360b0f75",
+      "pin_hash": "ffbb047dd83ca446d524ca8859936c8d319d854fa6a523783c10a32ec022d291"
+    },
+    {
+      "name": "jaswant",
+      "email": "1234567897@mandi.local",
+      "phone": "1234567897",
+      "role": "farmer",
+      "city": "Rangareddy",
+      "state": "Telangana",
+      "_id": "d3956c9acb5177866b44c7bc"
+    },
+    {
+      "name": "jaswant",
+      "email": "7589137727@mandi.local",
+      "phone": "7589137727",
+      "role": "farmer",
+      "city": "Rangareddy",
+      "state": "Telangana",
+      "_id": "5795d2bdd7d3d25cbf61cde2",
+      "pin_salt": "19a7257f04c20b0beec4263d59f5ce9a",
+      "pin_hash": "8cc1303e8f8e581af86d564d0f3e5e749c7c6fceb06cfc7a250035277c6e9914"
+    }
+  ],
+  "products": [
+    {
+      "_id": "1a21b2e2fa121fee2b05a626",
+      "farmer_id": "7055b6b72105b87220d17875",
+      "farmer_name": "Lakshmi Farms",
+      "name": "Tomatoes",
+      "description": "Fresh red tomatoes, picked this morning.",
+      "quantity": 35,
+      "unit": "kg",
+      "price": 32,
+      "ready_by": "2026-09-16",
+      "status": "active"
+    },
+    {
+      "_id": "3fa82cf90090f4ba57257e28",
+      "farmer_id": "7055b6b72105b87220d17875",
+      "farmer_name": "Lakshmi Farms",
+      "name": "Potatoes",
+      "description": "Clean, firm farm potatoes for everyday cooking.",
+      "quantity": 50,
+      "unit": "kg",
+      "price": 28,
+      "ready_by": "2026-09-16",
+      "status": "active"
+    },
+    {
+      "_id": "4677f239a0e9f357ac05bc00",
+      "farmer_id": "7055b6b72105b87220d17875",
+      "farmer_name": "Lakshmi Farms",
+      "name": "Carrots",
+      "description": "Sweet orange carrots, naturally grown.",
+      "quantity": 20,
+      "unit": "kg",
+      "price": 45,
+      "ready_by": "2026-09-17",
+      "status": "active"
+    },
+    {
+      "_id": "65a7a925888432787fd2862f",
+      "farmer_id": "7055b6b72105b87220d17875",
+      "farmer_name": "Lakshmi Farms",
+      "name": "Spinach",
+      "description": "Fresh leafy spinach bunches.",
+      "quantity": 18,
+      "unit": "bag",
+      "price": 25,
+      "ready_by": "2026-09-16",
+      "status": "active"
+    },
+    {
+      "_id": "4558e7727160ad473c4beb26",
+      "farmer_id": "c6a245058c26e78dca69b41a",
+      "farmer_name": "Sunrise Orchards",
+      "name": "Bananas",
+      "description": "Naturally ripened yellow bananas.",
+      "quantity": 12,
+      "unit": "dozen",
+      "price": 55,
+      "ready_by": "2026-09-16",
+      "status": "active"
+    },
+    {
+      "_id": "6e33712b4c1dd3f3ced205de",
+      "farmer_id": "c6a245058c26e78dca69b41a",
+      "farmer_name": "Sunrise Orchards",
+      "name": "Mangoes",
+      "description": "Seasonal sweet mangoes from the orchard.",
+      "quantity": 25,
+      "unit": "kg",
+      "price": 90,
+      "ready_by": "2026-09-18",
+      "status": "active"
+    },
+    {
+      "_id": "847c5dd3ed3b0be5652737dd",
+      "farmer_id": "c6a245058c26e78dca69b41a",
+      "farmer_name": "Sunrise Orchards",
+      "name": "Guavas",
+      "description": "Juicy, vitamin-rich guavas.",
+      "quantity": 16,
+      "unit": "kg",
+      "price": 65,
+      "ready_by": "2026-09-17",
+      "status": "active"
+    },
+    {
+      "_id": "0f2a24706f4e786923a323eb",
+      "farmer_id": "a3a4815b81726b81bc05ab21",
+      "farmer_name": "Green Valley Dairy",
+      "name": "Fresh Cow Milk",
+      "description": "Pure chilled cow milk, delivered fresh daily.",
+      "quantity": 30,
+      "unit": "bag",
+      "price": 60,
+      "ready_by": "2026-09-16",
+      "status": "active"
+    },
+    {
+      "_id": "1b7ef4de87d3b582e88707e0",
+      "farmer_id": "a3a4815b81726b81bc05ab21",
+      "farmer_name": "Green Valley Dairy",
+      "name": "Homemade Curd",
+      "description": "Thick, fresh-set curd with no additives.",
+      "quantity": 15,
+      "unit": "kg",
+      "price": 85,
+      "ready_by": "2026-09-16",
+      "status": "active"
+    },
+    {
+      "_id": "3bedaabde223f85ddddb9a79",
+      "farmer_id": "a3a4815b81726b81bc05ab21",
+      "farmer_name": "Green Valley Dairy",
+      "name": "Paneer",
+      "description": "Soft, fresh paneer made from full-cream milk.",
+      "quantity": 10,
+      "unit": "kg",
+      "price": 380,
+      "ready_by": "2026-09-17",
+      "status": "active"
+    },
+    {
+      "_id": "8e06ac659438d6a7f6795c48",
+      "farmer_id": "a3a4815b81726b81bc05ab21",
+      "farmer_name": "Green Valley Dairy",
+      "name": "Desi Ghee",
+      "description": "Traditional aromatic ghee, small-batch prepared.",
+      "quantity": 8,
+      "unit": "kg",
+      "price": 720,
+      "ready_by": "2026-09-17",
+      "status": "active"
+    },
+    {
+      "farmer_id": "288d9f14eebfbbfc934cde6b",
+      "farmer_name": "varun",
+      "name": "tomato",
+      "description": "",
+      "quantity": 50,
+      "unit": "kg",
+      "price": 30,
+      "ready_by": "2025-12-01",
+      "status": "active",
+      "_id": "9cdca71c297245ca2e341143"
+    },
+    {
+      "farmer_id": "288d9f14eebfbbfc934cde6b",
+      "farmer_name": "varun",
+      "name": "aloo",
+      "description": "big",
+      "quantity": 50,
+      "unit": "kg",
+      "price": 15,
+      "ready_by": "1899-07-02",
+      "status": "active",
+      "_id": "a6b266a9e1ea6266d56f2485"
+    },
+    {
+      "farmer_id": "d3956c9acb5177866b44c7bc",
+      "farmer_name": "jaswant",
+      "name": "apple",
+      "description": "100% organic apples",
+      "quantity": 100,
+      "unit": "kg",
+      "price": 100,
+      "ready_by": "2026-09-27",
+      "status": "active",
+      "_id": "eb731688503463e963f87535"
+    }
+  ],
+  "messages": [
+    {
+      "sender_id": "288d9f14eebfbbfc934cde6b",
+      "sender_name": "varun",
+      "recipient_id": "bff6f87c65f13aa75a830302",
+      "recipient_name": "sridhar reddy",
+      "body": "there are still available",
+      "product_id": "a6b266a9e1ea6266d56f2485",
+      "order_request_id": "03aa211a1e2d30934e116461",
+      "_id": "01712deb073de23bb6a5e05e",
+      "created_at": "2026-09-26T05:03:39.200Z"
+    },
+    {
+      "sender_id": "bff6f87c65f13aa75a830302",
+      "sender_name": "sridhar reddy",
+      "recipient_id": "288d9f14eebfbbfc934cde6b",
+      "recipient_name": "varun",
+      "body": "how will you charge for the delivery",
+      "product_id": "",
+      "_id": "536240ec1980b673a78d157c",
+      "created_at": "2026-09-26T05:07:40.252Z"
+    }
+  ],
+  "order_requests": [
+    {
+      "buyer_id": "bff6f87c65f13aa75a830302",
+      "buyer_name": "sridhar reddy",
+      "farmer_id": "7055b6b72105b87220d17875",
+      "farmer_name": "Lakshmi Farms",
+      "farmer_phone": "9000000001",
+      "farmer_email": "lakshmi@mandi.local",
+      "product_id": "4677f239a0e9f357ac05bc00",
+      "product_name": "Carrots",
+      "body": "Hi Lakshmi Farms, I am interested in your Carrots. Is it still available?",
+      "status": "pending",
+      "reply": "",
+      "_id": "1468287519d0300f4ae355ac",
+      "created_at": "2026-09-21T09:15:43.043Z",
+      "replied_at": ""
+    },
+    {
+      "buyer_id": "bff6f87c65f13aa75a830302",
+      "buyer_name": "sridhar reddy",
+      "farmer_id": "288d9f14eebfbbfc934cde6b",
+      "farmer_name": "varun",
+      "farmer_phone": "9121873643",
+      "farmer_email": "9121873643@mandi.local",
+      "product_id": "9cdca71c297245ca2e341143",
+      "product_name": "tomato",
+      "body": "Hi varun, I am interested in your tomato. Is it still available?",
+      "status": "accepted",
+      "reply": "hlo sir \nyes it is available sir",
+      "_id": "5e00323ed087b45a873d18e1",
+      "created_at": "2026-09-21T09:16:56.303Z",
+      "replied_at": "2026-09-21T09:19:18.787Z"
+    },
+    {
+      "buyer_id": "bff6f87c65f13aa75a830302",
+      "buyer_name": "sridhar reddy",
+      "farmer_id": "288d9f14eebfbbfc934cde6b",
+      "farmer_name": "varun",
+      "farmer_phone": "9121873643",
+      "farmer_email": "9121873643@mandi.local",
+      "product_id": "a6b266a9e1ea6266d56f2485",
+      "product_name": "aloo",
+      "body": "Hi varun, I am interested in your aloo. Is it still available?",
+      "status": "pending",
+      "reply": "",
+      "_id": "28c9a5e0fb945a2cbcfd8687",
+      "created_at": "2026-09-24T05:45:50.323Z",
+      "replied_at": ""
+    },
+    {
+      "buyer_id": "bff6f87c65f13aa75a830302",
+      "buyer_name": "sridhar reddy",
+      "farmer_id": "288d9f14eebfbbfc934cde6b",
+      "farmer_name": "varun",
+      "farmer_phone": "9121873643",
+      "farmer_email": "9121873643@mandi.local",
+      "product_id": "a6b266a9e1ea6266d56f2485",
+      "product_name": "aloo",
+      "body": "Hi varun, I am interested in your aloo. Is it still available? I want 10kg of them",
+      "status": "accepted",
+      "reply": "there are still available",
+      "_id": "03aa211a1e2d30934e116461",
+      "created_at": "2026-09-26T05:00:31.404Z",
+      "replied_at": "2026-09-26T05:03:39.200Z"
+    }
+  ],
+  "sessions": [
+    {
+      "token": "4813b7d1f23e201bd8566e49c26bd9463ddd865b62fb0379297b21d819daa256",
+      "user_id": "bff6f87c65f13aa75a830302",
+      "created_at": "2026-09-30T03:58:52.752Z",
+      "expires_at": "2026-10-07T03:58:52.752Z"
+    },
+    {
+      "token": "eb8d7db5e2b985f19d84d615f71e369fed3858745c38a57ce9d6d2ea7a9b66e2",
+      "user_id": "288d9f14eebfbbfc934cde6b",
+      "created_at": "2026-09-30T04:02:28.852Z",
+      "expires_at": "2026-10-07T04:02:28.852Z"
+    }
+  ]
+}
